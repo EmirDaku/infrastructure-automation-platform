@@ -1,7 +1,7 @@
 # infrastructure-automation-platform
 
 ## Overview
-This repository demonstrates a full Kubernetes workflow including:
+This repository demonstrates a full infrastructure-automation-platform  workflow including:
 -  Built and managed a containerized .NET application using Docker and Docker Compose, with PostgreSQL persistence .
 -  Implemented CI/CD pipelines with GitHub Actions, including secure secrets management, image tagging, and automated deployment to an Ubuntu server.
 -  ntegrated monitoring and observability using Prometheus, exporters, and Grafana, with dashboards and documented setup.
