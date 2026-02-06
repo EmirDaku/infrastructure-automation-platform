@@ -4,7 +4,7 @@ data "azurerm_resource_group" "sandbosrg" {
 resource "azurerm_virtual_network" "vnet" {
   name                  = var.vnet_name
   address_space         = [var.vnet_address_space]
-  location              = var.location
+  location              = data.azurerm_resource_group.rg.location
   resource_group_name   = data.azurerm_resource_group.rg.name
 }
 
@@ -18,7 +18,7 @@ resource "azurerm_subnet" "subnet" {
 
 resource "azurerm_network_security_group" "nsg" {
   name                        = "${var.vm_name}-nsg"
-  location                    = var.location
+  location                    = data.azurerm_resource_group.rg.location
   resource_group_name         = data.azurerm_resource_group.rg.name
 }
 
@@ -39,7 +39,7 @@ resource "azurerm_network_security_rule" "ssh_or_rdp" {
 resource "azurerm_public_ip" "pip" {
   count                       = var.enable_public_ip ? 1 : 0
   name                        = "${var.vm_name}-pip"
-  location                    = var.location 
+  location                    = data.azurerm_resource_group.rg.location
   resource_group_name         = data.azurerm_resource_group.rg.name
   allocation_method           = "Static"
   sku                         = "Standard"
@@ -47,7 +47,7 @@ resource "azurerm_public_ip" "pip" {
 
 resource "azurerm_network_interface" "nic" {
   name                          = "${var.vm_name}-nic"
-  location                       = var.location
+  location                       = data.azurerm_resource_group.rg.location
   resource_group_name            = data.azurerm_resource_group.rg.name
 
   ip_configuration {
@@ -98,7 +98,7 @@ resource "azurerm_linux_virtual_machine" "linux" {
 resource "azurerm_windows_virtual_machine" "windows" {
   count = var.os_type == "windows" ? 1 : 0
   name = var.vm_name
-  location = var.location
+  location = data.azurerm_resource_group.rg.location
   resource_group_name   = data.azurerm_resource_group.rg.name
   size = var.vm_size
   admin_username = var.admin_username
