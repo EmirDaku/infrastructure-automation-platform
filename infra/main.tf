@@ -1,4 +1,4 @@
-data "azurerm_resource_group" "sandbosrg" {
+data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
 }
 resource "azurerm_virtual_network" "vnet" {
@@ -14,10 +14,29 @@ resource "azurerm_subnet" "subnet" {
   virtual_network_name  = azurerm_virtual_network.vnet.name
   address_prefixes      = [var.subnet_prefix]
 }
+resource "azurerm_public_ip" "pip" {
+  count                       = var.enable_public_ip ? 1 : 0
+  name                        = "${var.vm_name_linux}-pip"
+  location                    = data.azurerm_resource_group.rg.location
+  resource_group_name         = data.azurerm_resource_group.rg.name
+  allocation_method           = "Static"
+  sku                         = "Standard"
+}
+resource "azurerm_network_interface" "nic" {
+  name                          = "${var.vm_name_linux}-nic"
+  location                       = data.azurerm_resource_group.rg.location
+  resource_group_name            = data.azurerm_resource_group.rg.name 
 
+  ip_configuration {
+    name                          = "ipconfig1"
+    subnet_id                     = azurerm_subnet.subnet.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id = var.enable_public_ip ? azurerm_public_ip.pip[0].id : null
+  }
+}
 
 resource "azurerm_network_security_group" "nsg" {
-  name                        = "${var.vm_name}-nsg"
+  name                        = "${var.vm_name_linux}-nsg"
   location                    = data.azurerm_resource_group.rg.location
   resource_group_name         = data.azurerm_resource_group.rg.name
 }
@@ -35,46 +54,27 @@ resource "azurerm_network_security_rule" "ssh_or_rdp" {
   resource_group_name         = data.azurerm_resource_group.rg.name
   network_security_group_name = azurerm_network_security_group.nsg.name
 }
-
-resource "azurerm_public_ip" "pip" {
-  count                       = var.enable_public_ip ? 1 : 0
-  name                        = "${var.vm_name}-pip"
-  location                    = data.azurerm_resource_group.rg.location
-  resource_group_name         = data.azurerm_resource_group.rg.name
-  allocation_method           = "Static"
-  sku                         = "Standard"
+resource "azurerm_network_interface_security_group_association" "nic_nsg" {
+  network_interface_id      = azurerm_network_interface.nic.id
+  network_security_group_id = azurerm_network_security_group.nsg.id   
 }
+#infrastrucrure for vm creation os linux
 
-resource "azurerm_network_interface" "nic" {
-  name                          = "${var.vm_name}-nic"
-  location                       = data.azurerm_resource_group.rg.location
-  resource_group_name            = data.azurerm_resource_group.rg.name
-
-  ip_configuration {
-    name                          = "ipconfig1"
-    subnet_id                     = azurerm_subnet.subnet.id
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id = var.enable_public_ip ? azurerm_public_ip.pip[0].id : null
-
-
-  }
-  
-   
-}
 
 resource "azurerm_linux_virtual_machine" "linux" {
   count = var.os_type == "linux" ? 1 : 0
-  name = var.vm_name
-  location = var.location
+  name = var.vm_name_linux
+  location = data.azurerm_resource_group.rg.location
   resource_group_name   = data.azurerm_resource_group.rg.name
-  size = var.vm_size
-  admin_username = var.admin_username
+  size = var.vm_size_linux
+  admin_username = var.admin_username_linux
+  
   disable_password_authentication = true
 
   network_interface_ids = [azurerm_network_interface.nic.id]
 
   os_disk {
-    name = "${var.vm_name}-osdisk"
+    name = "${var.vm_name_linux}-osdisk"
     caching = "ReadWrite"
     storage_account_type = var.os_disk_type
     disk_size_gb = var.os_disk_size_gb
@@ -88,26 +88,32 @@ resource "azurerm_linux_virtual_machine" "linux" {
   }
 
   admin_ssh_key {
-    username = var.admin_username
-    public_key = var.ssh_public_key
+    username = var.admin_username_linux
+    public_key = file(var.ssh_public_key)
   }
 
  boot_diagnostics {  }
 
 }
+
+#infrastrucrure for vm creation os windows
+
+
+
+
 resource "azurerm_windows_virtual_machine" "windows" {
   count = var.os_type == "windows" ? 1 : 0
-  name = var.vm_name
+  name = var.vm_name_windows
   location = data.azurerm_resource_group.rg.location
   resource_group_name   = data.azurerm_resource_group.rg.name
-  size = var.vm_size
-  admin_username = var.admin_username
-  admin_password = var.admin_password
+  size = var.vm_size_windows
+  admin_username = var.admin_username_windows
+  admin_password = var.admin_password_windows
 
   network_interface_ids = [azurerm_network_interface.nic.id]
 
   os_disk {
-    name = "${var.vm_name}-osdisk"
+    name = "${var.vm_name_windows}-osdisk"
     caching = "ReadWrite"
     storage_account_type = var.os_disk_type
     disk_size_gb = var.os_disk_size_gb
