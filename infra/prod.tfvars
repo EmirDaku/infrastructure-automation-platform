@@ -1,4 +1,4 @@
-resource_group_name  = "1-4241f6ea-playground-sandbox"
+resource_group_name  = "1-c1c082b6-playground-sandbox"
 vnet_name            = "iap-vnet"
 vnet_address_space   = "10.0.0.0/16"
 subnet_name          = "iap-subnet"
