@@ -17,12 +17,14 @@ jobs:
       - name: Login to GitHub Container Registry
         run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-     - name: Build Docker image
-        run: docker build -t ghcr.io/emirdaku/dotnetapp 
-            
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t ghcr.io/emirdaku/dotnetapp:8.0 \
+            .
 
       - name: Push Docker image
-        run: docker push ghcr.io/emirdaku/dotnetapp
+        run: docker push ghcr.io/emirdaku/dotnetapp:8.0
 
   deploy:
     name: Deploy to VM
@@ -30,7 +32,7 @@ jobs:
     needs: build
 
     steps:
-      - name: Deploy using SSH & Docker Compose
+      - name: Deploy to VM with Docker Compose
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VM_HOST }}
@@ -38,11 +40,11 @@ jobs:
           key: ${{ secrets.VM_SSH_KEY }}
           port: 22
           script: |
-            cd /home/azureuser/app/mini-saas
+            cd /home/azureuser/app/infrastructure-automation-platform
 
             git reset --hard
             git clean -fd
-            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/emirdaku/infrastructure-automation-platform
+            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/emirdaku/infrastructure-automation-platform.git
             git pull origin main
 
             docker-compose down --remove-orphans || true
