@@ -59,7 +59,7 @@ jobs:
                 cd "$REPO_DIR" || exit
             fi
 
-            
+            cd app
             if [ -f "docker-compose.yaml" ]; then
                 echo "Starting containers with docker-compose..."
                 docker-compose down --remove-orphans || true
@@ -68,6 +68,7 @@ jobs:
             else
                 echo "docker-compose.yaml not found, skipping container start"
             fi
+
 
 
 
