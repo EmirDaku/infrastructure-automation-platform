@@ -1,0 +1,52 @@
+name: ci/cd
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t ghcr.io/emirdaku/mini-saas:8.0 \
+            .
+
+      - name: Push Docker image
+        run: docker push ghcr.io/emirdaku/mini-saas:8.0
+
+  deploy:
+    name: Deploy to VM
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Deploy using SSH & Docker Compose
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          port: 22
+          script: |
+            cd /home/azureuser/app/mini-saas
+
+            git reset --hard
+            git clean -fd
+            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/emirdaku/mini-saas.git
+            git pull origin main
+
+            docker-compose down --remove-orphans || true
+            docker-compose pull
+            docker-compose up -d --force-recreate
