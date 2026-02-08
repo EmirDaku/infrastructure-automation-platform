@@ -33,29 +33,7 @@ ENTRYPOINT ["dotnet", "dotnetapp.dll"]
 git clone https://github.com/EmirDaku/infrastructure-automation-platform/tree/main
 cd infrastructure-automation-platform
 
-## Project Structure
-infrastructure-automation-platform/
-│
-├─ app/                          # Application layer
-│   ├─ dotnetapp/                # .NET 8 application source code
-│   ├─ db_backups/               # Database backup scripts or dumps
-│   ├─ Dockerfile                # Dockerfile for dotnetapp
-│   ├─ docker-compose.yaml       # Compose setup for app, DB, Prometheus, Grafana
-│   ├─ .env                      # Environment variables for local/dev
-│   └─ prometheus.yaml           # Prometheus configuration
-│
-├─ cd_infra/                     # Continuous Deployment & Infrastructure (Terraform)
-│   ├─ .terraform/               # Terraform state files & modules
-│   ├─ key-azure/                # Azure SSH keys or credentials
-│   ├─ main.tf                   # Main Terraform configuration
-│   ├─ provider.tf               # Terraform providers
-│   ├─ variables.tf              # Terraform variables
-│   ├─ prod.tfvars               # Production variables
-│   ├─ terraform.tfstate         # Terraform state file (ignore in git usually)
-│   └─ .terraform.lock.hcl       # Terraform provider lock file
-│
-├─ .github/                      # GitHub configuration
-│   └─ workflows/  
+
 
 
 
