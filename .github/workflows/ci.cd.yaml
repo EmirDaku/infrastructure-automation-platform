@@ -40,16 +40,34 @@ jobs:
           key: ${{ secrets.VM_SSH_KEY }}
           port: 22
           script: |
-            cd infrastructure-automation-platform/azureuser
+           
+            REPO_DIR="/home/azureuser/infrastructure-automation-platform"
+            REPO_URL="https://x-access-token:${{ secrets.GH_PAT }}@github.com/emirdaku/infrastructure-automation-platform.git"
 
-            git reset --hard
-            git clean -fd
-            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/emirdaku/infrastructure-automation-platform.git
-            git pull origin main
+            
+            if [ -d "$REPO_DIR" ]; then
+                echo "Repo exists, updating..."
+                cd "$REPO_DIR" || exit
+                git reset --hard
+                git clean -fd
+                git remote set-url origin "$REPO_URL"
+                git pull origin main
+            else
+                echo "Repo does not exist, cloning..."
+                mkdir -p "$(dirname "$REPO_DIR")"
+                git clone "$REPO_URL" "$REPO_DIR"
+                cd "$REPO_DIR" || exit
+            fi
 
-            docker-compose down --remove-orphans || true
-            docker-compose pull
-            docker-compose up -d --force-recreate
+            
+            if [ -f "docker-compose.yaml" ]; then
+                echo "Starting containers with docker-compose..."
+                docker-compose down --remove-orphans || true
+                docker-compose pull
+                docker-compose up -d --force-recreate
+            else
+                echo "docker-compose.yaml not found, skipping container start"
+            fi
 
 
 
