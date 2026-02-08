@@ -1,8 +1,8 @@
-version: "3.9"
-
 services:
   dotnetapp:
-    image: ghcr.io/emirdaku/infrastructure-automation-platform/dotnetapp:8.0
+    build: 
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "5000:5000"
       - "5001:5001"
@@ -22,7 +22,6 @@ services:
       - ./init-db:/docker-entrypoint-initdb.d 
     ports:
       - "5432:5432"
-    restart: unless-stopped
 
   prometheus:
     image: docker.io/prom/prometheus:v3.5.0
@@ -30,9 +29,10 @@ services:
     command:
       - --config.file=/etc/prometheus/prometheus.yaml
     ports:
-      - "9090:9090"
+      - 9090:9090
     volumes:
       - ./prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+
     restart: unless-stopped
 
   grafana:
@@ -52,4 +52,5 @@ volumes:
     driver: local
   prometheus-data:
     driver: local
+
 
