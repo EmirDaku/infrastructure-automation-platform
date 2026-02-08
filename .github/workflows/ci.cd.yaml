@@ -22,6 +22,7 @@ jobs:
           docker build -f app/Dockerfile \
             -t ghcr.io/emirdaku/dotnetapp:8.0 \
             app/
+            docker tag ghcr.io/emirdaku/dotnetapp:$IMAGE_TAG ghcr.io/emirdaku/dotnetapp:latest
 
       - name: Push Docker image
         run: docker push ghcr.io/emirdaku/dotnetapp:8.0
@@ -69,6 +70,7 @@ jobs:
             else
                 echo "docker-compose.yaml not found, skipping container start"
             fi
+
 
 
 
