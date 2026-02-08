@@ -65,9 +65,11 @@ jobs:
                 docker-compose down --remove-orphans || true
                 docker-compose pull
                 docker-compose up -d --force-recreate
+                docker ps
             else
                 echo "docker-compose.yaml not found, skipping container start"
             fi
+
 
 
 
