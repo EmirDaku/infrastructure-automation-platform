@@ -19,9 +19,9 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build \
+          docker build -f app/Dockerfile \
             -t ghcr.io/emirdaku/dotnetapp:8.0 \
-            .
+            app/
 
       - name: Push Docker image
         run: docker push ghcr.io/emirdaku/dotnetapp:8.0
@@ -50,4 +50,5 @@ jobs:
             docker-compose down --remove-orphans || true
             docker-compose pull
             docker-compose up -d --force-recreate
+
 
