@@ -30,7 +30,7 @@ ENTRYPOINT ["dotnet", "dotnetapp.dll"]
 ```
 ## Clone the repository
 
-git clone https://github.com/<your-username>/infrastructure-automation-platform.git
+git clone https://github.com/EmirDaku/infrastructure-automation-platform/tree/main/app
 cd infrastructure-automation-platform
 
 
