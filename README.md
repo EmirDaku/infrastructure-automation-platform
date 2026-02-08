@@ -28,6 +28,10 @@ WORKDIR /app
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "dotnetapp.dll"]
 ```
+## Clone the repository
+
+git clone https://github.com/<your-username>/infrastructure-automation-platform.git
+cd infrastructure-automation-platform
 
 
 
