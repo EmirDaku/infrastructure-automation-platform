@@ -17,14 +17,12 @@ jobs:
       - name: Login to GitHub Container Registry
         run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Build Docker image
-        run: |
-          docker build \
-            -t ghcr.io/emirdaku/mini-saas:8.0 \
-            .
+     - name: Build Docker image
+        run: docker build -t ghcr.io/emirdaku/dotnetapp 
+            
 
       - name: Push Docker image
-        run: docker push ghcr.io/emirdaku/mini-saas:8.0
+        run: docker push ghcr.io/emirdaku/dotnetapp
 
   deploy:
     name: Deploy to VM
@@ -44,9 +42,10 @@ jobs:
 
             git reset --hard
             git clean -fd
-            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/emirdaku/mini-saas.git
+            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/emirdaku/infrastructure-automation-platform
             git pull origin main
 
             docker-compose down --remove-orphans || true
             docker-compose pull
             docker-compose up -d --force-recreate
+
