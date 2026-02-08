@@ -40,7 +40,7 @@ jobs:
           key: ${{ secrets.VM_SSH_KEY }}
           port: 22
           script: |
-            cd /home/azureuser/app/infrastructure-automation-platform
+            cd infrastructure-automation-platform/azureuser
 
             git reset --hard
             git clean -fd
@@ -50,5 +50,6 @@ jobs:
             docker-compose down --remove-orphans || true
             docker-compose pull
             docker-compose up -d --force-recreate
+
 
 
