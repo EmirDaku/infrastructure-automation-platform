@@ -20,12 +20,12 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -f app/Dockerfile \
-            -t ghcr.io/emirdaku/dotnetapp:8.0 \
+          -t ghcr.io/emirdaku/infrastructure-automation-platform/dotnetapp:8.0 \
             app/
             
 
       - name: Push Docker image
-        run: docker push ghcr.io/emirdaku/dotnetapp:8.0
+        run: docker push ghcr.io/emirdaku/infrastructure-automation-platform/dotnetapp:8.0
 
   deploy:
     name: Deploy to VM
@@ -70,6 +70,7 @@ jobs:
             else
                 echo "docker-compose.yaml not found, skipping container start"
             fi
+
 
 
 
