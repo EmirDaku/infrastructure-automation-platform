@@ -1,8 +1,18 @@
 # infrastructure-automation-platform
 
+
 ## Overview
-This repository demonstrates a full infrastructure-automation-platform  workflow including:
--  Built and managed a containerized .NET application using Docker and Docker Compose, with PostgreSQL persistence .
--  Implemented CI/CD pipelines with GitHub Actions, including secure secrets management, image tagging, and automated deployment to an Ubuntu server.
--  ntegrated monitoring and observability using Prometheus, exporters, and Grafana, with dashboards and documented setup.
--  pplied DevOps best practices including branch protection, multi-branch workflows, environment templates, and automated backups.
+
+This repository demonstrates a full **infrastructure automation platform** workflow, including:
+
+- **Virtual Machine provisioned with Terraform (IaC)** on Azure
+- **Dockerized .NET 8 API** (`dotnetapp`)
+- **PostgreSQL database** (`dotnetapp_database`) with persistent storage
+- **Prometheus** monitoring and **Grafana** dashboards
+- **CI/CD pipelines** using GitHub Actions for automated builds, tests, and deployments
+- **Environment management** via `.env` file
+- **Restart policies** for automatic service recovery
+
+
+
+
